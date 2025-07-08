@@ -74,7 +74,7 @@
         <div class="flex-1 flex items-center justify-center">
             <div class="text-center">
             <h1 class="display-4" style="color: white; font-family: 'Poppins', sans-serif; font-weight: bolder;">Welcome to FakeGuard</h1>
-            <p class="lead" style="color: white; font-family: 'Poppins', sans-serif;">The Best Platform to Detect Fake News</p>
+            <p class="lead" style="color: white; font-family: 'Poppins', sans-serif;">A Machine Learning Platform to Detect Fake News</p>
             </div>
         </div>
 
