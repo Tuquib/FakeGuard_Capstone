@@ -8,22 +8,57 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #fff;
+            --text-color: #111;
+            --card-bg: #fff;
+            --card-border: #d1d5db;
+            --border-color: #ddd;
+            --navbar-bg: #fff;
+            --input-bg: #fff;
+            --input-border: #ccc;
+            --input-text: #111;
+            --primary: #556B2F;
+            --primary-hover: #6B8E23;
+            --alert-bg: #f8f9fa;
+            --alert-text: #888;
+            --real: #218838; /* deep green for light mode */
+            --fake: #C82333; /* deep red for light mode */
+        }
         body {
-            background-color: #000000;
-            color: white;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            --bg-color: #000;
+            --text-color: #fff;
+            --card-bg: #181a1b;
+            --card-border: #333;
+            --border-color: #333;
+            --navbar-bg: #000;
+            --input-bg: #000;
+            --input-border: #333;
+            --input-text: #fff;
+            --primary: #556B2F;
+            --primary-hover: #6B8E23;
+            --alert-bg: #000;
+            --alert-text: #888;
+            --real: #39FF14; /* bright green for dark mode */
+            --fake: #FF4C4C; /* bright red for dark mode */
         }
         .navbar {
-            background-color: #000000;
+            background-color: var(--navbar-bg);
             padding: 1rem 2rem;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border-color);
         }
         .navbar-brand {
             display: flex;
             align-items: center;
             gap: 1rem;
-            color: white;
+            color: var(--text-color);
             text-decoration: none;
         }
         .navbar-brand img {
@@ -73,7 +108,7 @@
             transform: translate(-50%, -50%);
             width: 200px;
             height: 200px;
-            background: #000000;
+            background: var(--bg-color);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
@@ -86,17 +121,20 @@
             margin: 0;
             line-height: 1;
             transition: color 0.5s ease;
+            color: var(--real);
         }
         .status {
             font-size: 1.2rem;
             margin-top: 0.5rem;
             transition: color 0.5s ease;
+            color: #888;
         }
         .detection-details {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 2rem;
             margin-top: 3rem;
+            border: 1px solid var(--border-color);
         }
         .detail-grid {
             display: grid;
@@ -110,16 +148,18 @@
         .detail-value {
             font-size: 1.8rem;
             font-weight: 600;
+            color: var(--text-color);
         }
         .detail-label {
             color: #888;
             font-size: 0.9rem;
         }
         .article-info {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 2rem;
             margin-top: 2rem;
+            border: 1px solid var(--border-color);
         }
         .article-header {
             margin-bottom: 1.5rem;
@@ -128,21 +168,20 @@
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 1rem;
-            color: #fff;
+            color: var(--text-color);
         }
         .article-meta {
             color: #888;
             font-size: 0.9rem;
             margin-bottom: 1rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
         .article-content {
-            color: #fff;
+            color: var(--text-color);
             line-height: 1.8;
             font-size: 1.1rem;
             padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.03);
             border-radius: 8px;
             margin-top: 1rem;
             white-space: pre-line;
@@ -174,8 +213,8 @@
             align-items: center;
             gap: 0.5rem;
             background: transparent;
-            border: 1px solid #00FF00;
-            color: #00FF00;
+            border: 1px solid var(--border-color);
+            color: var(--real);
             padding: 0.8rem 1.5rem;
             border-radius: 8px;
             text-decoration: none;
@@ -183,20 +222,20 @@
             margin-top: 2rem;
         }
         .back-btn:hover {
-            background: #00FF00;
-            color: #000000;
+            background: var(--real);
+            color: var(--bg-color);
         }
         .confidence-meter {
             width: 100%;
             height: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,0.1);
             border-radius: 4px;
             margin-top: 1rem;
             overflow: hidden;
         }
         .confidence-bar {
             height: 100%;
-            background: #00FF00;
+            background: var(--real);
             border-radius: 4px;
             transition: width 0.5s ease;
         }
@@ -205,7 +244,7 @@
             justify-content: space-around;
             margin-top: 1rem;
             padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 8px;
         }
         .percentage-item {
@@ -221,17 +260,17 @@
             margin-top: 0.5rem;
         }
         .real-percentage {
-            color: #00FF00;
+            color: var(--real);
         }
         .fake-percentage {
-            color: #FF0000;
+            color: var(--fake);
         }
         .highlighted-text {
             font-weight: bold;
         }
         .real-highlight, .fake-highlight {
             display: inline;
-            color: #fff !important;
+            color: var(--text-color);
             padding: 2px 4px;
             margin: 0 2px;
             border-radius: 2px;
@@ -258,7 +297,6 @@
             align-items: center;
             min-height: 400px;
         }
-        
         .error-box {
             background: rgba(255, 0, 0, 0.1);
             border-radius: 12px;
@@ -267,23 +305,19 @@
             max-width: 600px;
             width: 100%;
         }
-        
         .error-box svg {
             margin-bottom: 1.5rem;
         }
-        
         .error-box h2 {
             color: #FF0000;
             font-size: 1.8rem;
             margin-bottom: 1rem;
         }
-        
         .error-box p {
             color: #fff;
             font-size: 1.1rem;
             margin-bottom: 2rem;
         }
-        
         .error-box .back-btn {
             margin-top: 0;
         }
@@ -312,15 +346,16 @@
             margin-bottom: 1rem;
         }
         .detection-summary {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 8px;
             padding: 1.5rem;
+            border: 1px solid var(--border-color);
         }
         .summary-section {
             margin-bottom: 1.5rem;
         }
         .sentence-item {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(0,0,0,0.03);
             border-radius: 4px;
             padding: 1rem;
             margin-bottom: 0.5rem;
@@ -333,78 +368,67 @@
         .fact-check-section {
             margin-top: 2rem;
             padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
-        
         .section-title {
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
-            color: #fff;
+            color: var(--text-color);
         }
-        
         .fact-checks-container {
             display: flex;
             flex-direction: column;
             gap: 1rem;
         }
-        
         .fact-check-item {
             padding: 1rem;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(0,0,0,0.03);
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        
         .fact-check-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(0,0,0,0.05);
         }
-        
         .fact-check-claim {
             margin-bottom: 1rem;
             font-size: 1.1rem;
             line-height: 1.6;
         }
-        
         .claimant {
             color: #888;
             font-size: 0.9rem;
             margin-left: 0.5rem;
         }
-        
         .fact-check-review {
             display: flex;
             align-items: center;
             gap: 1.5rem;
             padding: 0.75rem;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(0,0,0,0.02);
             border-radius: 4px;
             margin-top: 0.5rem;
         }
-        
         .review-source {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
         .publisher {
             font-weight: 500;
-            color: #00FF00;
+            color: var(--real);
         }
-        
         .review-rating {
-            color: #fff;
+            color: var(--text-color);
         }
-        
         .rating {
-            color: #00FF00;
+            color: var(--real);
             font-weight: 500;
         }
-        
         .review-link {
             margin-left: auto;
-            color: #00FF00;
+            color: var(--real);
             text-decoration: none;
             display: flex;
             align-items: center;
@@ -414,11 +438,9 @@
             border-radius: 4px;
             transition: all 0.2s ease;
         }
-        
         .review-link:hover {
             background: rgba(0, 255, 0, 0.2);
         }
-        
         .review-link svg {
             width: 16px;
             height: 16px;
@@ -427,12 +449,77 @@
         .claims-info {
             margin-top: 1rem;
             padding: 1rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--card-bg);
             border-radius: 8px;
         }
         .claims-count {
             font-size: 0.9rem;
             color: #888;
+        }
+        .toggle-darkmode {
+            margin-left: 1rem;
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+        .toggle-darkmode.active, .toggle-darkmode:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .real-color { color: var(--real) !important; }
+        .fake-color { color: var(--fake) !important; }
+        .btn,
+        button,
+        .toggle-darkmode,
+        .back-btn {
+            background: #111;
+            color: #fff;
+            border: 1.5px solid #111;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+        .btn,
+    button,
+    .toggle-darkmode,
+    .logout-btn {
+        background: #111;
+        color: #fff;
+        border: 1.5px solid #111;
+        transition: background 0.2s, color 0.2s, border 0.2s;
+    }
+    .btn:hover,
+        button:hover,
+        .toggle-darkmode:hover,
+        .toggle-darkmode.active,
+        .back-btn:hover {
+            background: #fff;
+            color: #111;
+            border: 1.5px solid #111;
+        }
+        body.dark-mode .btn,
+        body.dark-mode button,
+        body.dark-mode .toggle-darkmode,
+        body.dark-mode .back-btn {
+            background: #fff;
+            color: #111;
+            border: 1.5px solid #fff;
+        }
+        body.dark-mode .btn:hover,
+        body.dark-mode button:hover,
+        body.dark-mode .toggle-darkmode:hover,
+        body.dark-mode .back-btn:hover {
+            background: #111;
+            color: #fff;
+            border: 1.5px solid #fff;
+        }
+        nav .toggle-darkmode:hover,
+        nav .toggle-darkmode.active {
+            background: #fff;
+            color: #111;
+            border: 1.5px solid #111;
         }
     </style>
 </head>
@@ -443,6 +530,7 @@
                 <img src="{{ asset('build/assets/images/logo.png') }}" alt="FakeGuard Logo">
                 <span>FakeGuard</span>
             </a>
+            <button class="toggle-darkmode" id="toggleDarkMode" title="Toggle dark mode">🌙</button>
         </div>
     </nav>
 
@@ -469,7 +557,7 @@
                             <strong>URL:</strong> {{ session('url', 'N/A') }}
                         </div>
                     </div>
-                    <a href="{{ route('dashboard') }}" class="back-btn">
+                    <a href="{{ route('dashboard') }}" class="back-btn btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
                         </svg>
@@ -494,7 +582,7 @@
                             <strong>URL:</strong> {{ session('detection_result')['url'] ?? 'N/A' }}
                         </div>
                     </div>
-                    <a href="{{ route('dashboard') }}" class="back-btn mt-4">
+                    <a href="{{ route('dashboard') }}" class="back-btn btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
                         </svg>
@@ -505,14 +593,14 @@
                 <div class="chart-section">
                     <div class="chart-container">
                         <div class="pie-chart" style="background: conic-gradient(
-                            #00FF00 0deg {{ session('detection_result')['bert_result']['real_percentage'] * 3.6 }}deg,
-                            #FF0000 {{ session('detection_result')['bert_result']['real_percentage'] * 3.6 }}deg 360deg
+                            var(--real) 0deg {{ session('detection_result')['bert_result']['real_percentage'] * 3.6 }}deg,
+                            var(--fake) {{ session('detection_result')['bert_result']['real_percentage'] * 3.6 }}deg 360deg
                         );"></div>
                         <div class="chart-overlay">
-                            <p class="percentage" style="color: {{ session('detection_result')['final_decision']['prediction'] === 'Real' ? '#00FF00' : '#FF0000' }}">
+                            <p class="percentage {{ session('detection_result')['final_decision']['prediction'] === 'Real' ? 'real-color' : 'fake-color' }}">
                                 {{ number_format(max(session('detection_result')['bert_result']['real_percentage'], session('detection_result')['bert_result']['fake_percentage']), 1) }}%
                             </p>
-                            <p class="status" style="color: {{ session('detection_result')['final_decision']['prediction'] === 'Real' ? '#00FF00' : '#FF0000' }}">
+                            <p class="status {{ session('detection_result')['final_decision']['prediction'] === 'Real' ? 'real-color' : 'fake-color' }}">
                                 {{ session('detection_result')['final_decision']['prediction'] }}
                             </p>
                         </div>
@@ -521,10 +609,10 @@
                     <div class="detection-details">
                         <div class="detail-grid">
                             <div class="detail-item">
-                                <div class="detail-value" style="color: {{ session('detection_result')['final_decision']['prediction'] === 'Real' ? '#00FF00' : '#FF0000' }}">
+                                <div class="detail-value {{ session('detection_result')['final_decision']['prediction'] === 'Real' ? 'real-color' : 'fake-color' }}">
                                     {{ session('detection_result')['final_decision']['prediction'] }}
                                     <span class="source-badge {{ strtolower(session('detection_result')['final_decision']['source']) === 'model' ? 'model' : 'fact-check' }}">
-                                        {{ strtolower(session('detection_result')['final_decision']['source']) === 'model' ? 'AI Model' : 'Fact Check' }}
+                                        {{ strtolower(session('detection_result')['final_decision']['source']) === 'model' ? ' Model ' : 'Fact Check' }}
                                     </span>
                                 </div>
                                 <div class="detail-label">Final Verdict</div>
@@ -590,7 +678,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('dashboard') }}" class="back-btn">
+                <a href="{{ route('dashboard') }}" class="back-btn btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
                     </svg>
@@ -639,7 +727,7 @@
                     </svg>
                     <h2>No Detection Results</h2>
                     <p>No article analysis results are available. Please try analyzing an article first.</p>
-                    <a href="{{ route('dashboard') }}" class="back-btn">
+                    <a href="{{ route('dashboard') }}" class="back-btn btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
                         </svg>
@@ -651,5 +739,28 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Dark mode toggle logic
+      const darkModeToggle = document.getElementById('toggleDarkMode');
+      function setDarkMode(enabled) {
+        if (enabled) {
+          document.body.classList.add('dark-mode');
+          darkModeToggle.classList.add('active');
+          darkModeToggle.textContent = '☀️';
+        } else {
+          document.body.classList.remove('dark-mode');
+          darkModeToggle.classList.remove('active');
+          darkModeToggle.textContent = '🌙';
+        }
+      }
+      // Load preference
+      const darkPref = localStorage.getItem('darkMode') === 'true';
+      setDarkMode(darkPref);
+      darkModeToggle.addEventListener('click', () => {
+        const enabled = !document.body.classList.contains('dark-mode');
+        setDarkMode(enabled);
+        localStorage.setItem('darkMode', enabled);
+      });
+    </script>
 </body>
 </html> 
