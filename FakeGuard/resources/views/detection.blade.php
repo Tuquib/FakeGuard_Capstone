@@ -521,6 +521,82 @@
             color: #111;
             border: 1.5px solid #111;
         }
+        .menu-btn {
+            background: #111;
+            border: 1.5px solid #111;
+            color: #fff;
+            font-size: 2rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+        .menu-btn:focus, .menu-btn:hover {
+            background: #fff;
+            color: #111;
+            border: 1.5px solid #111;
+        }
+        .menu-icon {
+            font-size: 2rem;
+            color: inherit;
+            vertical-align: middle;
+            transition: color 0.2s;
+        }
+        body.dark-mode .menu-btn {
+            background: #fff;
+            color: #111;
+            border: 1.5px solid #fff;
+        }
+        body.dark-mode .menu-btn:focus,
+        body.dark-mode .menu-btn:hover {
+            background: #111;
+            color: #fff;
+            border: 1.5px solid #fff;
+        }
+        body.dark-mode .menu-icon {
+            color: inherit;
+        }
+        .dropdown-menu {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            min-width: 180px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        .dropdown-item,
+        .toggle-darkmode-dropdown {
+            background: #111;
+            color: #fff;
+            border: 1.5px solid #111;
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+            border-radius: 8px;
+            margin: 0.25rem 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: calc(100% - 1rem);
+            text-align: left;
+        }
+        .dropdown-item:focus, .dropdown-item:hover,
+        .toggle-darkmode-dropdown:focus, .toggle-darkmode-dropdown:hover {
+            background: #fff;
+            color: #111;
+            border: 1.5px solid #111;
+        }
+        body.dark-mode .dropdown-item,
+        body.dark-mode .toggle-darkmode-dropdown {
+            background: #fff;
+            color: #111;
+            border: 1.5px solid #fff;
+        }
+        body.dark-mode .dropdown-item:focus,
+        body.dark-mode .dropdown-item:hover,
+        body.dark-mode .toggle-darkmode-dropdown:focus,
+        body.dark-mode .toggle-darkmode-dropdown:hover {
+            background: #111;
+            color: #fff;
+            border: 1.5px solid #fff;
+        }
     </style>
 </head>
 <body>
@@ -530,7 +606,25 @@
                 <img src="{{ asset('build/assets/images/logo.png') }}" alt="FakeGuard Logo">
                 <span>FakeGuard</span>
             </a>
-            <button class="toggle-darkmode" id="toggleDarkMode" title="Toggle dark mode">🌙</button>
+            <div class="dropdown ms-auto">
+                <button class="btn menu-btn" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false" title="Menu" type="button">
+                    <span class="menu-icon">&#9776;</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuDropdown">
+                    <li>
+                        <button class="dropdown-item toggle-darkmode-dropdown" id="toggleDarkModeDropdown" type="button">
+                            <span id="darkModeText">Dark Mode</span>
+                        </button>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="dropdown-item logout-btn">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -740,27 +834,36 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      // Dark mode toggle logic
-      const darkModeToggle = document.getElementById('toggleDarkMode');
+      // Force light mode as default unless user explicitly set dark mode
+      if (localStorage.getItem('darkMode') !== 'true') {
+        document.body.classList.remove('dark-mode');
+      }
+      // Dark mode toggle logic (dropdown version)
+      const darkModeToggleDropdown = document.getElementById('toggleDarkModeDropdown');
+      const darkModeText = document.getElementById('darkModeText');
       function setDarkMode(enabled) {
         if (enabled) {
           document.body.classList.add('dark-mode');
-          darkModeToggle.classList.add('active');
-          darkModeToggle.textContent = '☀️';
+          if (darkModeText) {
+            darkModeText.textContent = 'Light Mode';
+          }
         } else {
           document.body.classList.remove('dark-mode');
-          darkModeToggle.classList.remove('active');
-          darkModeToggle.textContent = '🌙';
+          if (darkModeText) {
+            darkModeText.textContent = 'Dark Mode';
+          }
         }
       }
       // Load preference
       const darkPref = localStorage.getItem('darkMode') === 'true';
       setDarkMode(darkPref);
-      darkModeToggle.addEventListener('click', () => {
-        const enabled = !document.body.classList.contains('dark-mode');
-        setDarkMode(enabled);
-        localStorage.setItem('darkMode', enabled);
-      });
+      if (darkModeToggleDropdown) {
+        darkModeToggleDropdown.addEventListener('click', () => {
+          const enabled = !document.body.classList.contains('dark-mode');
+          setDarkMode(enabled);
+          localStorage.setItem('darkMode', enabled);
+        });
+      }
     </script>
 </body>
 </html> 
