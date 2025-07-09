@@ -27,7 +27,25 @@
                 position: relative;
                 min-height: 100vh;
                 overflow-x: hidden;
-                background-color: #000000; /* Solid black background */
+                background-color: #fff;
+                color: #111;
+            }
+            h1, .display-4, .lead, span, p {
+                color: #111 !important;
+            }
+            .main-btn, .inline-block.px-5 {
+                background: #111;
+                color: #fff !important;
+                border: 1.5px solid #111;
+                transition: background 0.2s, color 0.2s, border 0.2s;
+            }
+            .main-btn:hover, .inline-block.px-5:hover {
+                background: #fff;
+                color: #111 !important;
+                border: 1.5px solid #111;
+            }
+            .navbar-brand span {
+                color: #111 !important;
             }
         </style>
     </head>
@@ -37,7 +55,7 @@
                 <nav class="flex items-center justify-between gap-4" style="max-width: 100%;">
                     <div class="flex items-center gap-3">
                         <img src="{{ asset('build/assets/images/logo.png') }}" alt="FakeGuard Logo" class="rounded-full object-cover shadow-sm" style="width: 100px; height: 100px;">
-                        <span style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.25rem; color: white;">
+                        <span style="font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.25rem; color: #111;">
                             FakeGuard
                         </span>
                     </div>
@@ -46,14 +64,14 @@
                         @auth
                             <a
                                 href="{{ url('/dashboard') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
+                                class="inline-block px-5 py-1.5 main-btn rounded-sm text-sm leading-normal"
                             >
                                 Dashboard
                             </a>
                         @else
                             <a
                                 href="{{ route('login') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-white border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
+                                class="inline-block px-5 py-1.5 main-btn rounded-sm text-sm leading-normal"
                             >
                                 Log in
                             </a>
@@ -61,7 +79,7 @@
                             @if (Route::has('register'))
                                 <a
                                     href="{{ route('register') }}"
-                                    class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-white dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
+                                    class="inline-block px-5 py-1.5 main-btn rounded-sm text-sm leading-normal">
                                     Signup
                                 </a>
                             @endif
@@ -73,8 +91,8 @@
 
         <div class="flex-1 flex items-center justify-center">
             <div class="text-center">
-            <h1 class="display-4" style="color: white; font-family: 'Poppins', sans-serif; font-weight: bolder;">Welcome to FakeGuard</h1>
-            <p class="lead" style="color: white; font-family: 'Poppins', sans-serif;">A Machine Learning Platform to Detect Fake News</p>
+            <h1 class="display-4" style="color: #111; font-family: 'Poppins', sans-serif; font-weight: bolder;">Welcome to FakeGuard</h1>
+            <p class="lead" style="color: #111; font-family: 'Poppins', sans-serif;">A Web Based Platform to Detect Fake News</p>
             </div>
         </div>
 
