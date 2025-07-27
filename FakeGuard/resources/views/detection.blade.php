@@ -242,6 +242,7 @@
         .percentage-details {
             display: flex;
             justify-content: space-around;
+            gap: 3rem;
             margin-top: 1rem;
             padding: 1rem;
             background: var(--card-bg);
@@ -278,12 +279,12 @@
             transition: all 0.2s ease;
         }
         .real-highlight {
-            background-color: rgba(39, 174, 96, calc(var(--opacity) * 0.5));
-            box-shadow: 0 0 8px rgba(39, 174, 96, calc(var(--opacity) * 0.3));
+            background-color:rgb(55, 158, 77); /* solid green */
+            box-shadow: 0 0 8pxrgb(55, 158, 77);
         }
         .fake-highlight {
-            background-color: rgba(231, 76, 60, calc(var(--opacity) * 0.5));
-            box-shadow: 0 0 8px rgba(231, 76, 60, calc(var(--opacity) * 0.3));
+            background-color: rgb(223, 104, 91); /* solid red */
+            box-shadow: 0 0 8px rgb(223, 104, 91);
         }
         .real-highlight:hover, .fake-highlight:hover {
             filter: brightness(1.2);
@@ -597,6 +598,15 @@
             color: #fff;
             border: 1.5px solid #fff;
         }
+        .related-article-link {
+            font-weight: 600;
+            color: var(--text-color);
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .related-article-link:hover {
+            color: #808080 ; /* darker shade for light mode */
+        }
     </style>
 </head>
 <body>
@@ -648,7 +658,14 @@
                             <h3 class="article-title">Article Details</h3>
                         </div>
                         <div class="article-meta">
-                            <strong>URL:</strong> {{ session('url', 'N/A') }}
+                            @php
+                                $errorUrl = session('url') ?? null;
+                            @endphp
+                            @if($errorUrl && $errorUrl !== 'direct_text_input')
+                                <strong>URL:</strong> {{ $errorUrl }}
+                            @elseif($errorUrl === 'direct_text_input' || empty($errorUrl))
+                                <strong>Source:</strong> Article Content
+                            @endif
                         </div>
                     </div>
                     <a href="{{ route('dashboard') }}" class="back-btn btn">
@@ -703,17 +720,21 @@
                     <div class="detection-details">
                         <div class="detail-grid">
                             <div class="detail-item">
-                                <div class="detail-value {{ session('detection_result')['final_decision']['prediction'] === 'Real' ? 'real-color' : 'fake-color' }}">
+                                <div class="detail-value {{ session('detection_result')['final_decision']['prediction'] === 'Real' ? 'real-color' : (session('detection_result')['final_decision']['prediction'] === 'Fake' ? 'fake-color' : '') }}">
                                     {{ session('detection_result')['final_decision']['prediction'] }}
-                                    <span class="source-badge {{ strtolower(session('detection_result')['final_decision']['source']) === 'model' ? 'model' : 'fact-check' }}">
-                                        {{ strtolower(session('detection_result')['final_decision']['source']) === 'model' ? ' Model ' : 'Fact Check' }}
+                                    @php
+                                        $hasFactCheck = !empty(session('detection_result')['fact_check_result']['matched_claims']);
+                                    @endphp
+                                    <span class="source-badge {{ $hasFactCheck ? 'fact-check' : 'model' }}">
+                                        {{ $hasFactCheck ? 'Fact Check' : 'Model' }}
                                     </span>
                                 </div>
                                 <div class="detail-label">Final Verdict</div>
-                                @if(session('detection_result')['final_decision']['source'] === 'fact_check_api' && count(session('detection_result')['fact_check_result']['matched_claims'] ?? []) > 0)
+                                @if($hasFactCheck)
                                     <div class="claims-info">
-                                        <span class="claims-count">{{ count(session('detection_result')['fact_check_result']['matched_claims']) }} fact check claims found</span>
+                                        <span class="claims-count">Fact check sources found and referenced below.</span>
                                     </div>
+                                
                                 @endif
                             </div>
                             <div class="detail-item">
@@ -739,15 +760,32 @@
                 <div class="article-info">
                     <div class="article-header">
                         <h2 class="article-title">
-                            @if(session('detection_result')['title'])
-                                {{ session('detection_result')['title'] }}
-                            @else
-                                Article Content
-                            @endif
+                            @php
+                                $title = session('detection_result')['title'] ?? null;
+                                $isTextInput = (session('detection_result')['url'] ?? null) === 'direct_text_input' || empty(session('detection_result')['url']);
+                                if (!$title && $isTextInput) {
+                                    // Try to use the first sentence as a fallback title
+                                    $highlightedText = session('detection_result')['highlighted_text'] ?? [];
+                                    if (!empty($highlightedText)) {
+                                        $firstSentence = trim($highlightedText[0]['sentence']);
+                                        // Limit to 80 chars for title
+                                        $fallbackTitle = mb_substr($firstSentence, 0, 80) . (mb_strlen($firstSentence) > 80 ? '...' : '');
+                                        $title = $fallbackTitle ?: 'Article Content';
+                                    } else {
+                                        $title = 'Article Content';
+                                    }
+                                }
+                            @endphp
+                            {{ $title }}
                         </h2>
                         <div class="article-meta">
-                            @if(session('detection_result')['url'])
-                                <span>URL: {{ session('detection_result')['url'] }}</span>
+                            @php
+                                $resultUrl = session('detection_result')['url'] ?? null;
+                            @endphp
+                            @if($resultUrl && $resultUrl !== 'direct_text_input')
+                                <span>URL: {{ $resultUrl }}</span>
+                            @elseif($resultUrl === 'direct_text_input' || empty($resultUrl))
+                                <span>Source: Article Content</span>
                             @endif
                         </div>
                     </div>
@@ -757,11 +795,10 @@
                             
                             if (!empty($highlightedText)) {
                                 foreach ($highlightedText as $item) {
-                                    $opacity = max(0.2, min(0.8, $item['confidence'] / 100));
                                     $class = $item['label'] === 'Real' ? 'real-highlight' : 'fake-highlight';
                                     $title = $item['label'] . ': ' . number_format($item['confidence'], 1) . '%';
                                     
-                                    echo "<span class='{$class}' style='--opacity: {$opacity}' title='{$title}'>" . 
+                                    echo "<span class='{$class}' title='{$title}'>" . 
                                          e($item['sentence']) . 
                                          "</span> ";
                                 }
@@ -772,12 +809,74 @@
                     </div>
                 </div>
 
+
+                
+
+                <!-- Related News Articles Section -->
+                @if(!empty(session('detection_result')['related_references']))
+                    <div class="fact-check-section mt-4">
+                        <h3 class="section-title">Related News Articles</h3>
+                        <ul style="list-style: none; padding-left: 0;">
+                            @foreach(session('detection_result')['related_references'] as $ref)
+                                <li style="margin-bottom: 1.5rem;">
+                                    <a href="{{ $ref['url'] }}" target="_blank" class="related-article-link">{{ $ref['title'] }}</a>
+                                    <p style="color: var(--text-color); margin: 0.5rem 0 0 0;">{{ strip_tags($ref['snippet']) }}</p>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <a href="{{ route('dashboard') }}" class="back-btn btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
                     </svg>
                     Back to Dashboard
                 </a>
+                
+                <!-- Download Report Button -->
+                <button id="downloadReportBtn" class="back-btn btn" type="button">Download Report (PDF)</button>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const btn = document.getElementById('downloadReportBtn');
+                    if (btn) {
+                        btn.addEventListener('click', async function() {
+                            btn.disabled = true;
+                            btn.textContent = 'Generating Report...';
+                            try {
+                                const detectionResult = @json(session('detection_result'));
+                                if (detectionResult && !detectionResult.error) {
+                                    if (!detectionResult.url && detectionResult.text) {
+                                        detectionResult.url = 'direct_text_input';
+                                    }
+                                    // Use Flask backend port 5000 for report generation
+                                    const response = await fetch('http://127.0.0.1:5000/generate_report', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify(detectionResult)
+                                    });
+                                    if (!response.ok) throw new Error('Failed to generate report');
+                                    const blob = await response.blob();
+                                    const url = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = 'FakeGuard_Report.pdf';
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    a.remove();
+                                    window.URL.revokeObjectURL(url);
+                                }
+                            } catch (e) {
+                                alert('Failed to generate report: ' + e.message);
+                            } finally {
+                                btn.disabled = false;
+                                btn.textContent = 'Download Report (PDF)';
+                            }
+                        });
+                    }
+                });
+                </script>
 
                 <!-- Add Fact Check Results Section -->
                 @if(!empty(session('detection_result')['fact_check_result']['matched_claims']))
