@@ -444,6 +444,63 @@
       color: #fff;
       border: 1.5px solid #fff;
     }
+    /* --- Nav Tabs Custom Styling --- */
+    .nav-tabs {
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 1.5rem;
+    }
+    .nav-tabs .nav-link {
+      background: #fff;
+      color: #111;
+      border: 1.5px solid #111;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      margin-right: 0.5rem;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s, border 0.2s;
+      position: relative;
+      z-index: 1;
+    }
+    .nav-tabs .nav-link:hover,
+    .nav-tabs .nav-link:focus {
+      background: #111;
+      color: #fff;
+      border: 1.5px solid #111;
+      border-bottom: 2px solid var(--bg-color);
+    }
+    .nav-tabs .nav-link.active {
+      background: #111;
+      color: #fff;
+      border: 1.5px solid #111;
+      border-bottom: 2px solid var(--bg-color);
+      z-index: 2;
+    }
+    body.dark-mode .nav-tabs .nav-link {
+      background: #111;
+      color: #fff;
+      border: 1.5px solid #fff;
+    }
+    body.dark-mode .nav-tabs .nav-link:hover,
+    body.dark-mode .nav-tabs .nav-link:focus {
+      background: #fff;
+      color: #111;
+      border: 1.5px solid #fff;
+      border-bottom: 2px solid #000;
+    }
+    body.dark-mode .nav-tabs .nav-link.active {
+      background: #fff;
+      color: #111;
+      border: 1.5px solid #fff;
+      border-bottom: 2px solid #000;
+      z-index: 2;
+    }
+    /* Remove default Bootstrap tab border */
+    .nav-tabs .nav-link {
+      border-bottom: none !important;
+    }
+    .nav-tabs {
+      border-bottom: none !important;
+    }
   </style>
 </head>
 <body>
@@ -467,9 +524,9 @@
           <li><hr class="dropdown-divider"></li>
           <li>
             <form method="POST" action="{{ route('logout') }}">
-              @csrf
+        @csrf
               <button type="submit" class="dropdown-item logout-btn">Logout</button>
-            </form>
+      </form>
           </li>
         </ul>
       </div>
@@ -495,26 +552,48 @@
         </div>
 
         <!-- Input Form -->
-        <form onsubmit="detectFakeNews(); return false;">
           <div class="mb-3">
+          <!-- Tabs for input mode -->
+          <ul class="nav nav-tabs mb-3" id="inputModeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="url-tab" data-bs-toggle="tab" data-bs-target="#urlInputTab" type="button" role="tab" aria-controls="urlInputTab" aria-selected="true">Enter URL</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="text-tab" data-bs-toggle="tab" data-bs-target="#textInputTab" type="button" role="tab" aria-controls="textInputTab" aria-selected="false">Paste Article Text</button>
+            </li>
+          </ul>
+          <div class="tab-content" id="inputModeTabsContent">
+            <div class="tab-pane fade show active" id="urlInputTab" role="tabpanel" aria-labelledby="url-tab">
+              <form id="urlForm" onsubmit="detectFakeNews('url'); return false;">
             <label for="newsUrl" class="form-label">News Article URL</label>
             <div class="input-group">
-              <input type="url" id="newsUrl" class="form-control url-input" placeholder="Paste news article URL here" required>
+                  <input type="url" id="newsUrl" class="form-control url-input" placeholder="Paste news article URL here">
               <button class="btn submit-btn" type="submit">
                 <span class="button-text">Detect Fake News</span>
                 <div class="spinner-border spinner-border-sm ms-2 d-none" role="status">
                   <span class="visually-hidden">Loading...</span>
                 </div>
               </button>
-            </div>
           </div>
         </form>
-
         <!-- URL Preview -->
         <div class="url-preview" id="urlPreview" style="display: none;">
           <img id="previewImage" src="" alt="Article preview">
           <h3 id="previewTitle"></h3>
           <p id="previewDescription"></p>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="textInputTab" role="tabpanel" aria-labelledby="text-tab">
+              <form id="textForm" onsubmit="detectFakeNews('text'); return false;">
+                <label for="articleText" class="form-label">Paste or Write Article Text</label>
+                <textarea id="articleText" class="form-control url-input" rows="7" placeholder="Paste or write the full article text here"></textarea>
+                <button class="btn submit-btn mt-3" type="submit">
+                  <span class="button-text">Detect Fake News</span>
+                  <div class="spinner-border spinner-border-sm ms-2 d-none" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </button>
+              </form>
         </div>
       </div>
     </div>
@@ -523,6 +602,8 @@
     <div class="loading" id="loading" style="display: none;">
       <div class="loading-spinner"></div>
       <div class="loading-text">Analyzing article...</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -533,15 +614,28 @@
       document.body.classList.remove('dark-mode');
     }
 
-    async function detectFakeNews() {
-      const url = document.getElementById('newsUrl').value;
-      const button = document.querySelector('.submit-btn');
-      const buttonText = button.querySelector('.button-text');
-      const spinner = button.querySelector('.spinner-border');
-
-      if (!url.trim()) {
+    async function detectFakeNews(mode) {
+      let input, value, button, buttonText, spinner;
+      if (mode === 'url') {
+        input = document.getElementById('newsUrl');
+        value = input.value;
+        button = document.querySelector('#urlForm .submit-btn');
+        buttonText = button.querySelector('.button-text');
+        spinner = button.querySelector('.spinner-border');
+        if (!value.trim()) {
         showError('Please enter a valid news article URL');
         return;
+        }
+      } else {
+        input = document.getElementById('articleText');
+        value = input.value;
+        button = document.querySelector('#textForm .submit-btn');
+        buttonText = button.querySelector('.button-text');
+        spinner = button.querySelector('.spinner-border');
+        if (!value.trim()) {
+          showError('Please paste or write the article text');
+          return;
+        }
       }
 
       // Show loading state
@@ -551,21 +645,24 @@
       document.getElementById('loading').style.display = 'block';
 
       try {
+        let bodyData = {};
+        if (mode === 'url') {
+          bodyData = { url: value.trim() };
+        } else {
+          bodyData = { text: value.trim() };
+        }
         const response = await fetch(`{{ route("detect") }}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
           },
-          body: JSON.stringify({ url: url.trim() })
+          body: JSON.stringify(bodyData)
         });
-
         const data = await response.json();
-
         if (!response.ok) {
           throw new Error(data.error || 'Failed to analyze the article');
         }
-
         // Store results in session and redirect
         const storeResponse = await fetch('{{ route("store.detection") }}', {
           method: 'POST',
@@ -573,25 +670,23 @@
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
           },
-          body: JSON.stringify({
-            detection_result: data.result,
-            url: url.trim()
-          })
+          body: JSON.stringify((() => {
+            const payload = { detection_result: data.result };
+            if (mode === 'url') payload.url = value.trim();
+            if (mode === 'text') payload.text = value.trim();
+            return payload;
+          })())
         });
-
         if (!storeResponse.ok) {
           throw new Error('Failed to store detection results');
         }
-
         // Redirect to detection view
         window.location.href = '{{ route("detection") }}';
-
       } catch (error) {
         showError(error.message);
       } finally {
-        // Reset button state
         button.disabled = false;
-        buttonText.textContent = 'Analyze';
+        buttonText.textContent = 'Detect Fake News';
         spinner.classList.add('d-none');
         document.getElementById('loading').style.display = 'none';
       }
@@ -608,40 +703,35 @@
         </svg>
         <strong>Error:</strong> ${message}
       `;
-
       // Remove any existing error alerts
       const existingAlert = document.querySelector('.alert-danger');
       if (existingAlert) {
         existingAlert.remove();
       }
-
       // Add the new error alert
       const cardBody = document.querySelector('.card-body');
       cardBody.appendChild(alertDiv);
-
       // Scroll to the error message
       alertDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
-    // Preview URL when pasted
+    // Preview URL when pasted (only for URL tab)
     document.getElementById('newsUrl').addEventListener('paste', async (e) => {
       const url = e.clipboardData.getData('text');
       if (!url) return;
-
+      // Only show preview if URL tab is active
+      if (!document.getElementById('urlInputTab').classList.contains('active')) return;
       const preview = document.getElementById('urlPreview');
       preview.style.display = 'none';
-      
       try {
         // Show loading state for preview
         const previewImage = document.getElementById('previewImage');
         const previewTitle = document.getElementById('previewTitle');
         const previewDescription = document.getElementById('previewDescription');
-        
         previewImage.src = '';
         previewTitle.textContent = 'Loading preview...';
         previewDescription.textContent = '';
         preview.style.display = 'block';
-
         // Get preview data from backend
         const response = await fetch('{{ route("preview") }}', {
           method: 'POST',
@@ -651,9 +741,7 @@
           },
           body: JSON.stringify({ url })
         });
-
         const data = await response.json();
-
         if (data.success) {
           previewImage.src = data.image || '';
           previewTitle.textContent = data.title || 'No title available';
